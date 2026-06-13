@@ -1,0 +1,54 @@
+# =============================================================================
+# AM-LLM — Python Dependencies
+# Adaptive Memory-Augmented Language Model
+# Install with: pip install -r requirements.txt
+# =============================================================================
+
+# --- Web Framework ---
+# FastAPI 0.110+ required for Pydantic v2 support
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+
+# --- LangGraph / LangChain ---
+# LangGraph 0.2+ has stable StateGraph API used in our agent
+langgraph>=0.2.0
+langchain-core>=0.3.0
+
+# --- LLM (Local Llama via Ollama) ---
+# langchain-ollama wraps the Ollama REST API — no API key needed
+langchain-ollama>=0.2.0
+# requests is used to check Ollama health before loading the model
+requests>=2.31.0
+
+# --- Embeddings ---
+# sentence-transformers 3.0+ supports all-MiniLM-L6-v2 cleanly
+sentence-transformers>=3.0.0
+
+# --- Vector Store ---
+# faiss-cpu 1.8+ supports HNSW index used for top-k retrieval
+faiss-cpu>=1.8.0
+
+# --- ML / Clustering ---
+# scikit-learn 1.4+ has stable AgglomerativeClustering API we use
+scikit-learn>=1.4.0
+# numpy >=1.24 — faiss-cpu 1.14+ and sentence-transformers 5.x support numpy 2.x
+numpy>=1.24.0
+
+# --- NLP Preprocessing ---
+# nltk 3.8+ for sentence tokenization (sent_tokenize)
+nltk>=3.8.0
+
+# --- Config ---
+pyyaml>=6.0.0
+
+# --- Data / Logging ---
+# pandas 2.x for CSV evaluation logs
+pandas>=2.0.0
+
+# --- Validation ---
+# pydantic v2 required by FastAPI 0.110+
+pydantic>=2.5.0
+
+# --- Testing ---
+pytest>=8.0.0
+httpx>=0.27.0          # async test client for FastAPI
