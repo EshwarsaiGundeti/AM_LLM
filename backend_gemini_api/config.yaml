@@ -1,0 +1,90 @@
+# =============================================================================
+# AM-LLM Configuration File
+# Adaptive Memory-Augmented Language Model
+# All tunable parameters live here. No code changes needed to adjust behaviour.
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Memory Importance Scoring
+# ---------------------------------------------------------------------------
+importance:
+  threshold: 0.60          # Min score for a candidate to enter Long-Term Memory
+  alpha: 0.50              # Weight for contextual relevance
+  beta: 0.30               # Weight for reference frequency
+  gamma: 0.20              # Weight for novelty (inverse similarity to existing LTM)
+  dedup_threshold: 0.92    # Cosine similarity above this = skip write (near-duplicate)
+
+# ---------------------------------------------------------------------------
+# Memory Retrieval
+# ---------------------------------------------------------------------------
+retrieval:
+  top_k: 5                 # Number of memories retrieved per query
+
+# ---------------------------------------------------------------------------
+# Time-Aware Forgetting
+# ---------------------------------------------------------------------------
+forgetting:
+  decay_rate: 0.01         # λ in S_new = S_old × e^(-λ × Δt)
+  min_relevance: 0.10      # Prune memory if score drops below this
+  interval: 10             # Run forgetting every N queries
+
+# ---------------------------------------------------------------------------
+# Memory Compression
+# ---------------------------------------------------------------------------
+compression:
+  interval: 20             # Run compression every N queries
+  merge_threshold: 0.30    # Distance threshold for agglomerative clustering
+  min_cluster_size: 2      # Minimum entries needed to trigger a merge
+
+# ---------------------------------------------------------------------------
+# Short-Term Memory (STM)
+# ---------------------------------------------------------------------------
+stm:
+  max_turns: 10            # Maximum conversation turns stored in STM buffer
+
+# ---------------------------------------------------------------------------
+# LLM — OpenAI ChatGPT via LangChain
+# ---------------------------------------------------------------------------
+llm:
+  provider: "gemini"                # Provider: "gemini" | "mock"
+  model_name: "gemini-2.0-flash"    # Free tier model. Options: "gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"
+  temperature: 0.7                  # Response creativity (0.0 = deterministic, 1.0 = creative)
+  max_tokens: 500                   # Max tokens to generate in each response
+  max_context_tokens: 100000        # Token budget for augmented context (Gemini 1.5 Flash supports 1M)
+  use_mock: false                   # Set true to skip API call (for offline testing)
+  # NOTE: Set your Google Gemini API key as an environment variable:
+  #   Get free key at: https://aistudio.google.com/app/apikey
+  #   Windows: $env:GOOGLE_API_KEY = "AIza..."
+  #   Or add to .env file: GOOGLE_API_KEY=AIza...
+
+# ---------------------------------------------------------------------------
+# Embedding Model
+# ---------------------------------------------------------------------------
+embedding:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  dimension: 384           # Output vector dimension (must match FAISS index)
+
+# ---------------------------------------------------------------------------
+# FAISS Index
+# ---------------------------------------------------------------------------
+faiss:
+  hnsw_m: 32               # HNSW graph connectivity parameter (higher = better recall, slower build)
+
+# ---------------------------------------------------------------------------
+# File Paths  (relative to backend/ directory)
+# ---------------------------------------------------------------------------
+paths:
+  faiss_index:     "data/ltm.index"
+  sqlite_db:       "data/memories.db"
+  eval_log:        "data/evaluation_log.csv"
+  forgetting_log:  "data/forgetting_log.csv"
+
+# ---------------------------------------------------------------------------
+# API Server
+# ---------------------------------------------------------------------------
+server:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins:
+    - "http://localhost:5173"   # React dev server
+    - "http://127.0.0.1:5173"
